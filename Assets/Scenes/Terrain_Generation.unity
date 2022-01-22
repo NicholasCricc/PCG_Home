@@ -280,9 +280,19 @@ MonoBehaviour:
   treeSpacing: 10
   addTrees: 1
   terrainLayerIndex: 8
+  vegData:
+  - vegMesh: {fileID: 100000, guid: 1de95aafaed1b594b88a317c6a6ac028, type: 3}
+    minHeight: 0
+    maxHeight: 1
+  maxVeg: 2000
+  vegSpacing: 10
+  addVeg: 1
+  terrainLayerIndexVeg: 0
   water: {fileID: 100006, guid: b544816461f324e56a39767fdeb5b114, type: 3}
   waterHeight: 0.3
   cloud: {fileID: 1000010237739742, guid: fe69c79d384eb4f4f944d4ec253d357a, type: 3}
+  CminHeight: 0
+  CmaxHeight: 0
   cloudHeight: 1.5
   fog: {fileID: 1000010237739742, guid: fe69c79d384eb4f4f944d4ec253d357a, type: 3}
   fogHeight: 0.3

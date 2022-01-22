@@ -21,6 +21,15 @@ public class TreeData
     public float maxHeight;
 }
 
+[System.Serializable]
+public class VegData
+{
+    public GameObject vegMesh;
+    public float minHeight;
+    public float maxHeight;
+}
+
+
 public class GenerateRandomHeights : MonoBehaviour
 {
     private Terrain terrain;
@@ -73,6 +82,22 @@ public class GenerateRandomHeights : MonoBehaviour
     [SerializeField]
     private int terrainLayerIndex;
 
+    [Header("Vegetation")]
+    [SerializeField]
+    private List<VegData> vegData;
+
+    [SerializeField]
+    private int maxVeg = 2000;
+
+    [SerializeField]
+    private int vegSpacing = 10;
+
+    [SerializeField]
+    private bool addVeg = false;
+
+    [SerializeField]
+    private int terrainLayerIndexVeg;
+
     [Header("Water")]
     [SerializeField]
     private GameObject water;
@@ -83,6 +108,8 @@ public class GenerateRandomHeights : MonoBehaviour
     [Header("Cloud")]
     [SerializeField]
     private GameObject cloud;
+    public float CminHeight;
+    public float CmaxHeight;
 
     [SerializeField]
     private float cloudHeight = 0.3f;
@@ -112,6 +139,8 @@ public class GenerateRandomHeights : MonoBehaviour
         AddTerrainTexture();
 
         AddTrees();
+
+        AddVegetation();
 
         AddWater();
 
@@ -305,12 +334,84 @@ public class GenerateRandomHeights : MonoBehaviour
 
     }
 
+    private void AddVegetation()
+    {
+        TreePrototype[] Vegs = new TreePrototype[vegData.Count];
+
+        for (int i = 0; i < vegData.Count; i++)
+        {
+            Vegs[i] = new TreePrototype();
+            Vegs[i].prefab = vegData[i].vegMesh;
+        }
+
+        terrainData.treePrototypes = Vegs;
+
+        List<TreeInstance> vegInstanceList = new List<TreeInstance>();
+
+        if (addTrees)
+        {
+            for (int z = 0; z < terrainData.size.z; z += vegSpacing)
+            {
+                for (int x = 0; x < terrainData.size.x; x += vegSpacing)
+                {
+                    for (int vegIndex = 0; vegIndex < Vegs.Length; vegIndex++)
+                    {
+                        if (vegInstanceList.Count < maxTrees)
+                        {
+                            float currentHeight = terrainData.GetHeight(x, z) / terrainData.size.y; // this is going to give us a height value between 0 and 1
+
+                            if (currentHeight >= vegData[vegIndex].minHeight && currentHeight <= vegData[vegIndex].maxHeight)
+                            {
+                                float randomX = (x + Random.Range(-5.0f, 5.0f)) / terrainData.size.x;
+
+                                float randomZ = (z + Random.Range(-5.0f, 5.0f)) / terrainData.size.z;
+
+                                Vector3 vegPosition = new Vector3(randomX * terrainData.size.x,
+                                                                          currentHeight * terrainData.size.y,
+                                                                          randomZ * terrainData.size.z) + this.transform.position;
+                                RaycastHit raycastHit;
+
+                                int layerMask = 1 << terrainLayerIndex;
+
+                                if (Physics.Raycast(vegPosition, -Vector3.up, out raycastHit, 100, layerMask) ||
+                                    Physics.Raycast(vegPosition, Vector3.up, out raycastHit, 100, layerMask))
+                                {
+                                    float vegDistance = (raycastHit.point.y - this.transform.position.y) / terrainData.size.y;
+
+                                    TreeInstance vegInstance = new TreeInstance();
+
+                                    vegInstance.position = new Vector3(randomX, vegDistance, randomZ);
+                                    vegInstance.rotation = Random.Range(0, 360);
+                                    vegInstance.prototypeIndex = vegIndex;
+                                    vegInstance.color = Color.white;
+                                    vegInstance.lightmapColor = Color.white;
+                                    vegInstance.heightScale = 0.95f;
+                                    vegInstance.widthScale = 0.95f;
+
+                                    vegInstanceList.Add(vegInstance);
+                                }
+
+
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        terrainData.treeInstances = vegInstanceList.ToArray();
+
+    }
+
     private void AddWater()
     {
         GameObject waterGameObject = Instantiate(water, this.transform.position, this.transform.rotation);
         waterGameObject.name = "Water";
-        waterGameObject.transform.position = this.transform.position + new Vector3(terrainData.size.x / 2, waterHeight * terrainData.size.y,
-        terrainData.size.z / 2);
+        int RandX = (int)Random.Range(0, terrainData.size.x / 2);
+        int RandY = (int)Random.Range(0, waterHeight * terrainData.size.y);
+        int RandZ = (int)Random.Range(0, terrainData.size.z / 2);
+        waterGameObject.transform.position = this.transform.position + new Vector3(RandX, RandY,
+        RandZ);
         waterGameObject.transform.localScale = new Vector3(terrainData.size.x, 1, terrainData.size.z);
     }
 
@@ -318,16 +419,22 @@ public class GenerateRandomHeights : MonoBehaviour
     {
         GameObject cloudGameObject = Instantiate(cloud, this.transform.position, this.transform.rotation);
         cloudGameObject.name = "Cloud";
-        cloudGameObject.transform.position = this.transform.position + new Vector3(terrainData.size.x / 2, cloudHeight * terrainData.size.y,
-        terrainData.size.z / 2);
+        int RandX = (int)Random.Range(0, terrainData.size.x / 2);
+        int RandY = (int)Random.Range(0, cloudHeight * terrainData.size.y);
+        int RandZ = (int)Random.Range(0, terrainData.size.z / 2);
+        cloudGameObject.transform.position = this.transform.position + new Vector3(RandX, RandY,
+        RandZ);
         cloudGameObject.transform.localScale = new Vector3(terrainData.size.x, 1, terrainData.size.z);
     }    
     private void AddFog()
     {
         GameObject fogGameObject = Instantiate(fog, this.transform.position, this.transform.rotation);
         fogGameObject.name = "Fog";
-        fogGameObject.transform.position = this.transform.position + new Vector3(terrainData.size.x / 2, fogHeight * terrainData.size.y,
-        terrainData.size.z / 2);
+        int RandX = (int)Random.Range(0, terrainData.size.x / 2);
+        int RandY = (int)Random.Range(0, fogHeight * terrainData.size.y);
+        int RandZ = (int)Random.Range(0, terrainData.size.z / 2);
+        fogGameObject.transform.position = this.transform.position + new Vector3(RandX, RandY,
+        RandZ);
         fogGameObject.transform.localScale = new Vector3(terrainData.size.x, 1, terrainData.size.z);
     }
     private void OnDestroy()
