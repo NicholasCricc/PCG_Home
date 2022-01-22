@@ -214,7 +214,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
 --- !u!1 &1360905262
 GameObject:
@@ -280,13 +280,10 @@ MonoBehaviour:
   treeSpacing: 10
   addTrees: 1
   terrainLayerIndex: 8
-  vegData:
-  - vegMesh: {fileID: 100000, guid: 1de95aafaed1b594b88a317c6a6ac028, type: 3}
-    minHeight: 0
-    maxHeight: 1
+  vegData: []
   maxVeg: 2000
   vegSpacing: 10
-  addVeg: 1
+  addVeg: 0
   terrainLayerIndexVeg: 0
   water: {fileID: 100006, guid: b544816461f324e56a39767fdeb5b114, type: 3}
   waterHeight: 0.3
@@ -296,6 +293,10 @@ MonoBehaviour:
   cloudHeight: 1.5
   fog: {fileID: 1000010237739742, guid: fe69c79d384eb4f4f944d4ec253d357a, type: 3}
   fogHeight: 0.3
+  xPos: 0
+  zPos: 0
+  playerCount: 0
+  Player: {fileID: 6092211473696764748, guid: 76e5a837ceb73024e9a970c511d57a88, type: 3}
 --- !u!154 &1360905264
 TerrainCollider:
   m_ObjectHideFlags: 0
@@ -365,6 +366,7 @@ GameObject:
   - component: {fileID: 1550594837}
   - component: {fileID: 1550594836}
   - component: {fileID: 1550594835}
+  - component: {fileID: 1550594838}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -430,10 +432,25 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1550594834}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalRotation: {x: 0.55870426, y: 0.15094475, z: -0.10426658, w: 0.8088225}
+  m_LocalPosition: {x: 216.38126, y: 754.0297, z: 122.893}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1550594838
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1550594834}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 381472e32eb69be4c8b7052c03fa2c1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetObject: {fileID: 3913836691599241670, guid: 76e5a837ceb73024e9a970c511d57a88, type: 3}
+  cameraOffset: {x: 0, y: 1, z: -10}
+  smoothFactor: 0.5
